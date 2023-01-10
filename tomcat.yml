@@ -38,7 +38,7 @@
       find:
         paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/"
         file_type: file
-        patterns: "*sh"
+        patterns: "*.sh"
         recurse: yes
       register: shell_files
     - name: Changing shell file permission
