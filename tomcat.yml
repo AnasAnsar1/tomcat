@@ -37,13 +37,13 @@
     - name: Finding shell files
       find:
         paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/"
+        file_type: file
         patterns: '*.sh'
         recurse: yes
       register: shell_files
     - name: Changing shell file permission
       file:
         path: "{{ item.path }}"
-        state: file
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
         mode: u=x,g=x
