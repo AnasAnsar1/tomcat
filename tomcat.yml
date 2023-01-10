@@ -30,7 +30,7 @@
         dest: "{{ user_home }}"
       when: not tomcat_tar.stat.exists
     - name: Changing shell file permission 
-      ansible.builtin.command: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
+      ansible.builtin.command: sh -c 'chmod +x /opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/*.sh'
     - name: Creating symbolic link
       ansible.builtin.file:
         src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
