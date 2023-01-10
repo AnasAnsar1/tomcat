@@ -43,12 +43,13 @@
       register: shell_files
     - name: Changing shell file permission
       file:
-        path: "{{ item.shell_files }}"
+        path: "{{ item.path }}"
         state: file
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
-      loop:
-        - '{ shell_files: x }'
+        mode: 'u=x,g=x'
+      with_items:
+        - "{{ shell_files }}" 
     - name: Creating symbolic link
       ansible.builtin.file:
         src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
