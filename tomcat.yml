@@ -29,7 +29,9 @@
         remote_src: yes
         dest: "{{ user_home }}/"
       when: not tomcat_tar.stat.exists
-      notify: changing shell file permission
+    - name: Changing shell file permission 
+      ansible.builtin.command:
+        cmd: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
     - name: Creating symbolic link
       ansible.builtin.file:
         src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
@@ -70,9 +72,6 @@
         - /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
       notify: Restart tomcat
   handlers:
-    - name: Changing shell file permission 
-      ansible.builtin.command:
-        cmd: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
     - name: Reloading daemon and start tomcat
       ansible.builtin.systemd:
         name: "{{ tomcat_service_name }}"
