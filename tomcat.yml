@@ -26,8 +26,8 @@
     - name: Untar tomcat
       unarchive:
         src: "https://www-eu.apache.org/dist/tomcat/tomcat-{{ major_tomcat_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
-        dest: "{{ user_home }}"
         remote_src: yes
+        dest: "{{ user_home }}"
       when: not tomcat_tar.stat.exists
     - name: Changing shell file permission 
       ansible.builtin.command: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
