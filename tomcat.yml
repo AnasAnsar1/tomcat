@@ -36,14 +36,20 @@
       when: not tomcat_tar.stat.exists
     - name: Finding shell files
       find:
-        paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/*.sh"
+        paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/"
+        file_type: file
+        patterns: *sh
         recurse: yes
-      register: shell_file
+      register: shell_files
     - name: Changing shell file permission
       file:
-        path: shell_file
+        path: {{ items }}
+        state: file
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+        mode: +x
       loops:
-        - chmod +x
+        - shell_files 
     - name: Creating symbolic link
       ansible.builtin.file:
         src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
