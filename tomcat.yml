@@ -21,7 +21,7 @@
         state: present
     - name: get tomcat stats
       stat:
-        path: "{{ user_home }}/"
+        path: "{{ user_home }}/latest/bin/startup.sh"
       register: tomcat_tar
     - name: Untar tomcat
       ansible.builtin.unarchive:
