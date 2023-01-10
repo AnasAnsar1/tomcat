@@ -44,8 +44,10 @@
     - name: Changing shell file permission
       file:
         path: "{{ item.path }}"
+        state: file
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
+        recurse: yes
         mode: u=x,g=x
       with_items:
         - "{{ shell_files }}" 
