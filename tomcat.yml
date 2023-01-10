@@ -34,8 +34,16 @@
         remote_src: yes
         dest: "{{ user_home }}"
       when: not tomcat_tar.stat.exists
-    - name: Changing shell file permission 
-      ansible.builtin.command: sh -c 'chmod +x /opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/*.sh'
+    - name: Finding shell files
+      find:
+        paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/*.sh"
+        recurse: yes
+      register: shell_file
+    - name: Changing shell file permission
+      file:
+        path: shell_file
+      loops:
+        - chmod +x
     - name: Creating symbolic link
       ansible.builtin.file:
         src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
