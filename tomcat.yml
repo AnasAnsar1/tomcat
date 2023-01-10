@@ -27,11 +27,10 @@
       ansible.builtin.unarchive:
         src: "https://www-eu.apache.org/dist/tomcat/tomcat-{{ major_tomcat_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
         remote_src: yes
-        dest: "{{ user_home }}/"
+        dest: "{{ user_home }}"
       when: not tomcat_tar.stat.exists
     - name: Changing shell file permission 
-      ansible.builtin.command:
-        cmd: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
+      ansible.builtin.command: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
     - name: Creating symbolic link
       ansible.builtin.file:
         src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
