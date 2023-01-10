@@ -37,7 +37,7 @@
     - name: Finding shell files
       find:
         paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/"
-        file_type: file
+        file_type: directory
         patterns: '*.sh'
         recurse: yes
       register: shell_files
