@@ -1,0 +1,85 @@
+---
+- name: installing tomcat
+  hosts: all
+  become: yes
+  tasks:
+    - name: Installing jdk-11
+      ansible.builtin.package:
+        name: "{{ java_package_name }}"
+        state: present
+    - name: Creating tomcat group
+      ansible.builtin.group:
+        name: "{{ group_name }}"
+        state: present
+    - name: Adding tomcat user
+      ansible.builtin.user:
+        name: "{{ user_name }}"
+        create_home: yes
+        home: "{{ user_home }}"
+        group: "{{ group_name }}"
+        shell: "{{ user_shell }}"
+        state: present
+    - name: get tomcat stats
+      stat:
+        path: "{{ user_home }}/"
+      register: tomcat_tar
+    - name: Untar tomcat
+      ansible.builtin.unarchive:
+        src: "https://www-eu.apache.org/dist/tomcat/tomcat-{{ major_tomcat_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+        remote_src: yes
+        dest: "{{ user_home }}/"
+      when: not tomcat_tar.stat.exists
+      notify: changing shell file permission
+    - name: Creating symbolic link
+      ansible.builtin.file:
+        src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
+        dest: /opt/tomcat/latest
+        state: link
+      when: not tomcat_tar.stat.exists
+    - name: Changing tomcat ownership
+      ansible.builtin.file:
+        path: /opt/tomcat
+        recurse: yes
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+        state: directory
+      when: not tomcat_tar.stat.exists
+    - name: Creating a tomcat.service with script
+      ansible.builtin.template:
+        src: tomcat.service.j2
+        dest: /etc/systemd/system/tomcat.service
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+      notify: Reloading daemon and start tomcat
+      when: 
+        - not tomcat_tar.stat.exists
+    - name: User access
+      ansible.builtin.copy:
+        src: tomcat-users.xml
+        dest: /opt/tomcat/latest/conf/tomcat-users.xml
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+    - name: Creating context file
+      ansible.builtin.copy:
+        src: context.xml 
+        dest: "{{ item }}"
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+      loop:
+        - /opt/tomcat/latest/webapps/manager/META-INF/context.xml
+        - /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
+      notify: Restart tomcat
+  handlers:
+    - name: changing shell file permission 
+      ansible.builtin.command:
+        cmd: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
+    - name: Reloading daemon and start tomcat
+      ansible.builtin.systemd:
+        name: "{{ tomcat_service_name }}"
+        daemon_reload: yes
+        state: started
+    - name: Restart tomcat
+      ansible.builtin.systemd:
+        name: tomcat.service
+        state: restarted
+
