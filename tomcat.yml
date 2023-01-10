@@ -43,7 +43,7 @@
       register: shell_files
     - name: Changing shell file permission
       file:
-        path: "{{ items }}"
+        path: "{{ item.path }}"
         state: file
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
