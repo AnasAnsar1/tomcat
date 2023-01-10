@@ -54,8 +54,8 @@
       when: 
         - not tomcat_tar.stat.exists
     - name: User access
-      ansible.builtin.copy:
-        src: tomcat-users.xml
+      ansible.builtin.template:
+        src: tomcat-users.xml.j2
         dest: /opt/tomcat/latest/conf/tomcat-users.xml
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
@@ -70,7 +70,7 @@
         - /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
       notify: Restart tomcat
   handlers:
-    - name: changing shell file permission 
+    - name: Changing shell file permission 
       ansible.builtin.command:
         cmd: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
     - name: Reloading daemon and start tomcat
