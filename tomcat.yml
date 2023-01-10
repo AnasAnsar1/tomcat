@@ -48,8 +48,8 @@
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
         mode: +x
-      loops:
-        - shell_files 
+      with_items:
+      - "{{ shell_files }}" 
     - name: Creating symbolic link
       ansible.builtin.file:
         src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
