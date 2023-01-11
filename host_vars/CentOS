@@ -1,5 +1,5 @@
 ---
-ansible_host: 172.31.33.119
+ansible_host: 3.108.59.8
 JAVA_HOME_PATH: /usr/lib/jvm/jre
 JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
 java_package_name: java-1.8.0-openjdk-devel
