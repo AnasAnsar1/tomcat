@@ -47,7 +47,7 @@
         state: directory
     - name: Finding shell files
       find:
-        paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/"
+        paths: /opt/tomcat/latest/bin/
         file_type: file
         patterns: '*.sh'
       register: shell_files
