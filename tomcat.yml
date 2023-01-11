@@ -32,24 +32,10 @@
       unarchive:
         src: "https://www-eu.apache.org/dist/tomcat/tomcat-{{ major_tomcat_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
         remote_src: yes
-        dest: "{{ user_home }}"
-    - name: Finding shell files
-      find:
-        paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/"
-        file_type: file
-        patterns: '*.sh'
-        recurse: yes
-      register: shell_files
-    - name: Changing shell file permission
-      file:
-        path: shell_files
-        state: directory
-        owner: "{{ user_name }}"
-        group: "{{ group_name }}"
-        mode: 'u=x,g=x'
+        dest: "{{ user_home }}/"
     - name: Creating symbolic link
       ansible.builtin.file:
-        src: /opt/tomcat/apache-tomcat-{{ tomcat_version }}
+        src: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}"
         dest: /opt/tomcat/latest
         state: link
     - name: Changing tomcat ownership
@@ -59,7 +45,20 @@
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
         state: directory
-    - name: Creating a tomcat.service with script
+    - name: Finding shell files
+      find:
+        paths: "/opt/tomcat/apache-tomcat-{{ tomcat_version }}/bin/"
+        file_type: file
+        patterns: '*.sh'
+      register: shell_files
+    - name: Changing shell file permission
+      file:
+        path: shell_files
+        state: file
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+        mode: 'u=x,g=x'
+    - name: Creating a tomcat.service with j2
       ansible.builtin.template:
         src: tomcat.service.j2
         dest: /etc/systemd/system/tomcat.service
