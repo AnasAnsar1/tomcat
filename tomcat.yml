@@ -54,7 +54,7 @@
     - name: Changing shell file permission
       file:
         path: shell_files
-        state: file
+        state: directory
         owner: "{{ user_name }}"
         group: "{{ group_name }}"
         mode: 'u=x,g=x'
